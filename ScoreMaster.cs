@@ -46,13 +46,13 @@ public class ScoreMaster {
 			if(aSpare){
 				aSpare = false;
 				frameList.Add (total);
-				total = 0;
+				total = roll;
 			}
 
 			if(total == 10){	//strike or spare
 				if(onSecondFrame){	//spare
 					//spare stuff
-					aSpare = false;
+					aSpare = true;
 					continue;
 				}
 				if( ! onSecondFrame){	//a strike!!
