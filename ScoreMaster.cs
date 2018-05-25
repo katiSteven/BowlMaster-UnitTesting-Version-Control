@@ -24,44 +24,48 @@ public class ScoreMaster {
 
 		//your code here
 
-		int rollCount = rolls.Count;	//length of the rolls list
-		if (rollCount % 2 != 0) {		//check if the last frame is completed or not
-			rolls.RemoveAt (rollCount-1);	//removing the incomplete frame from the score calculation as the turn is not finished
-		}
+//		int rollCount = rolls.Count;	//length of the rolls list
+//		if (rollCount % 2 != 0) {		//check if the last frame is completed or not
+//			rolls.RemoveAt (rollCount-1);	//removing the incomplete frame from the score calculation as the turn is not finished
+//		}
 
 		int total = 0,Count = 0;
-		bool onSecondFrame = false,aSpare = false,aStrike = false;
+		bool onSecondFrameCurrently = false,wasASpare = false,wasAStrike = false;
 
 		foreach(int roll in rolls){
 			Count++;
-			onSecondFrame = false;
-			if(Count % 2 == 0){ onSecondFrame = true;}
+			onSecondFrameCurrently = false;
+			if(Count % 2 == 0){ onSecondFrameCurrently = true;}
 
 			total += roll;
 
-			if(aStrike){
-				aStrike = false;
-				continue;
+			if(wasAStrike){
+//				aStrike = false;
+				if (onSecondFrameCurrently) {
+					frameList.Add (total);
+					total = total - 10;
+					wasAStrike = false;
+				} else {
+					continue;
+				}
 			}
-			if(aSpare){
-				aSpare = false;
+			if(wasASpare){
+				wasASpare = false;
 				frameList.Add (total);
 				total = roll;
 			}
-
 			if(total == 10){	//strike or spare
-				if(onSecondFrame){	//spare
-					//spare stuff
-					aSpare = true;
+				if(onSecondFrameCurrently){	//spare
+					wasASpare = true;
 					continue;
 				}
-				if( ! onSecondFrame){	//a strike!!
-					aStrike = true;
+				if( ! onSecondFrameCurrently){	//a strike!!
+					wasAStrike = true;
 					Count++;
 					continue;
 				}
 			}
-			if (onSecondFrame) {
+			if (onSecondFrameCurrently) {
 				frameList.Add (total);
 				total = 0;
 			}
