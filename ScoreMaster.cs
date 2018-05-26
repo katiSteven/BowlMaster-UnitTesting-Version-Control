@@ -12,14 +12,10 @@ public class ScoreMaster {
 
 		List<int> cumulativeScores = new List<int> ();
 		int runningTotal = 0;
-		int frameCount = 0;// should be no more than 10 frames
 
 		foreach(int frameScore in ScoreFrames (rolls)){
-			frameCount++;
-			if(frameCount <= 10){
 				runningTotal += frameScore;
 				cumulativeScores.Add (runningTotal);
-			}
 		}
 
 		return cumulativeScores;
@@ -97,20 +93,19 @@ public class ScoreMaster {
 			int count = 0;//to keep track of every bowl
 		try{
 			for(int i=0;i<rolls.Count;i++){
-				count++;
-				total += rolls [i];
+				if(frameList.Count == 10){break;}
+				count++;		//to consider every frame
+				total += rolls [i];		//adding every frame score
 				if (rolls [i] == 10 && count % 2 == 1) {	//strike conditions
-					total += rolls [i + 1] + rolls [i + 2];
-					frameList.Add(total);
+					frameList.Add(total + rolls [i + 1] + rolls [i + 2]);
 					total = 0;				//reset the total
-					count++;
+					count++;				//to take into consideration the skipped 2nd attempt suring a strike
 				}
 				else if(total == 10 && (count % 2) == 0){	//spare conditions
-					total += rolls[i + 1];
-					frameList.Add(total);
-					total = 0;
+					frameList.Add(total + rolls[i + 1]);
+					total = 0;				//reset the total
 				}
-				else if(rolls[i] < 10 && (count % 2) == 0){		//every frame has 2 attempts where pin(s) are left standing
+				else if(rolls[i] < 10 && (count % 2) == 0){		//Normal "OPEN" frame
 					frameList.Add(total);
 					total = 0;				//reset the total
 				}
