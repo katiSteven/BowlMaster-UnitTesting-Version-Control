@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+//using System.
 using UnityEngine;
+
 
 public class ScoreMaster {
 
@@ -24,13 +26,15 @@ public class ScoreMaster {
 
 		//your code here
 
-//		int rollCount = rolls.Count;	//length of the rolls list
-//		if (rollCount % 2 != 0) {		//check if the last frame is completed or not
-//			rolls.RemoveAt (rollCount-1);	//removing the incomplete frame from the score calculation as the turn is not finished
-//		}
-
 		int total = 0,Count = 0;
-		bool onSecondFrameCurrently = false,wasASpare = false,wasAStrike = false;
+		bool onSecondFrameCurrently = false;
+		bool wasASpare = false;
+
+		int bowlsAfterSpare = 0;
+		int bowlsAfterStrike = 0;
+
+		Stack StrikeStack = new Stack();
+		StrikeStack.Push ("$");
 
 		foreach(int roll in rolls){
 			Count++;
@@ -39,36 +43,46 @@ public class ScoreMaster {
 
 			total += roll;
 
-			if(wasAStrike){
-//				aStrike = false;
-				if (onSecondFrameCurrently) {
-					frameList.Add (total);
-					total = total - 10;
-					wasAStrike = false;
-				} else {
-					continue;
-				}
-			}
-			if(wasASpare){
-				wasASpare = false;
-				frameList.Add (total);
-				total = roll;
-			}
-			if(total == 10){	//strike or spare
+
+			if((total % 10) == 0){	// spare
 				if(onSecondFrameCurrently){	//spare
 					wasASpare = true;
 					continue;
 				}
-				if( ! onSecondFrameCurrently){	//a strike!!
-					wasAStrike = true;
-					Count++;
-					continue;
-				}
 			}
-			if (onSecondFrameCurrently) {
+
+			if( roll == 10){	//a strike!!
+				StrikeStack.Push ("S");
+				Count++;
+				continue;
+			}
+
+
+			if(wasASpare)
+				bowlsAfterSpare++;
+
+			if (StrikeStack.Peek ().ToString().Equals("S")) {
+				bowlsAfterStrike++;
+			}
+
+
+			if(bowlsAfterSpare == 1){
+				wasASpare = false; bowlsAfterSpare = 0;
+				frameList.Add (total);
+				total = roll;
+
+			}else if((bowlsAfterStrike % 2) == 0 && bowlsAfterStrike != 0){
+				bowlsAfterStrike = 0;
+				StrikeStack.Pop ();
+				frameList.Add (total);
+				total = total - 10;
+
+			} if (onSecondFrameCurrently && total <10) {
 				frameList.Add (total);
 				total = 0;
 			}
+
+
 		}
 
 
